@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel ="stylesheet" th:href ="@{/css/home/welcome.css}">
+  <link rel ="stylesheet" th:href ="@{/css/admin/admin.css}">
+  <link rel ="stylesheet" th:href ="@{/css/user/user.css}">
+  <title th:utext="${title}"></title>
+
+  <style>
+    td{
+      border: 1px solid darkgray;
+      padding: 5px;
+    }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</head>
+<body>
+
+<th:block th:include="/_menu"></th:block>
+
+<main>
+  <div class="session">
+    <p style="color: #629fb1"><b>Страница админа</b></p>
+    <b>Это защищенная страница!</b>
+  </div>
+
+  <div class="welcomeUser">
+    <h3>Добро пожаловать :
+      <span th:utext="${#request.userPrincipal.name}"></span>
+    </h3>
+    <div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
+    <label th:if="${avgMark != null}">Средняя оценка: </label>
+    <label th:if="avgMark != null" th:utext="${avgMark}" class="rating"></label>
+  </div>
+</main>
+
+<div class="content">
+  <div class="infoAdmin"><h3>Все пользователи:</h3></div>
+
+  <div class="tableUser">
+    <div>
+      <table style="border: 2px solid darkgray">
+        <tr>
+          <th style="width: 30px">ID</th>
+          <th style="width: 200px">Имя пользователя</th>
+          <th style="width: 550px">Пароль</th>
+          <th style="width: 200px">Редактировать</th>
+          <th style="width: 180px; display: flex">Назначить админа</th>
+        </tr>
+        <tr th:each="user: ${users}">
+          <td th:text="${user.userId}" style="width: 30px"/>
+          <td th:text="${user.userName}" style="width: 200px"/>
+          <td th:text="${user.encrytedPassword}" style="width: 550px"/>
+          <td><a th:href="'/admin/' + ${user.userId} + '/edit'">Редактор пароля</a></td>
+          <td>
+            <form th:action="'/admin/' + ${user.userId} + '/setAdmin'" method="post">
+              <button type="submit" th:name="id + ${user.userId}" class="but-quest">Назначить админа</button>
+            </form>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!--Вывод всех вопросов и его id для связи с сервером-->
+  <div class="infoAdmin"><h3>Вопросы пользователей:</h3></div>
+
+  <div class="tableUserQ">
+    <div>
+      <table style="border: 2px solid darkgray">
+        <tr>
+          <th style="width: 30px">ID</th>
+          <th style="width: 500px">Вопрос пользователя</th>
+          <th style="width: 200px; display: flex">Ответить</th>
+        </tr>
+        <tr th:each="question: ${questions}">
+          <td th:text="${question.getAppQuestion().getId()}" style="width: 30px"/>
+          <td th:text="${question.getAppQuestion()}" style="width: 500px"/>
+          <td>
+            <!--Назначение id / Не должно быть 2ативных пользователя-->
+            <button onclick="accessUser()">Принять</button>
+            <button onclick="end()" >Завершить сеанс</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+<footer class="footerWelcome">
+  <div>ЧАСТНЫМ КЛИЕНТАМ</div>
+  <div>О КОМПАНИИ</div>
+  <div>СОТРУДНИЧЕСТВО</div>
+</footer>
+
+<!--Скрипты для кнопок ajax-->
+<!--Человек, который верхний в очереди, он принимается-->
+<script>
+  function accessUser() {
+    $.ajax({
+      url: "/acceptPerson", //нужный адрес переход
+      method: "post",
+      cache: false,
+      dataType: "html",
+      data: {},
+      success: function (data) {
+        console.log(data)
+      }
+    });
+  }
+
+  <!-- На вторую кнопку ajax-->
+  function end() {
+    $.ajax({
+      url: "/endSession", //нужный адрес переход
+      method: "post",
+      cache: false,
+      dataType: "html",
+      data: {},
+      success: function (data) {
+        console.log(data)
+      }
+    });
+  }
+</script>
+
+</body>
+
+</html>

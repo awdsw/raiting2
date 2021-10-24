@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Login</title>
+  <link rel ="stylesheet" th:href ="@{/css/home/welcome.css}">
+  <link rel ="stylesheet" th:href ="@{/css/login/login.css}">
+</head>
+<body>
+<!-- Include _menu.html -->
+<th:block th:include="/_menu"></th:block>
+
+<h1 class="titleLogin">Чтобы задать вопрос и записаться на консультацию войдите в систему или зарегистрируйтесь</h1>
+
+<div class="box">
+  <div class="box-enter">
+    <h3>Введите имя пользователя и пароль:</h3>
+
+    <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
+      <table>
+        <tr>
+          <td>Пользователь:</td>
+          <td><input type='text' name='username' value=''></td>
+        </tr>
+        <tr>
+          <td>Пароль:</td>
+          <td><input type='password' name='password' /></td>
+        </tr>
+        <tr>
+          <td>Remember Me?</td>
+          <td><input type="checkbox" name="remember-me" /></td>
+        </tr>
+        <tr>
+          <td><input name="submit" type="submit" value="Войти" /></td>
+        </tr>
+      </table>
+    </form>
+
+    <!-- /login?error=true -->
+    <div class="err">
+      <div  th:if="${#request.getParameter('error') == 'true'}"
+            style="color:red;margin:10px 0px;">
+        Проверьте правильность ввода логина или пароля<br/>
+        Reason :
+        <span th:if="${#session!= null and #session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION') != null}"
+              th:utext="${#session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION').message}">
+                Static summary
+         </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="box-registration">
+    <!--Форма для регистрации пользоателя-->
+    <!--Пользователь может зарег как User, поэтому роль выбираем User-->
+    <h3>Зарегистрироваться</h3>
+    <form action="/registration" method="post">
+      <table>
+        <tr>
+          <td>Ввести логин:</td>
+          <td><input type="text" name="name" value=""></td>
+        </tr>
+        <tr>
+          <td>Ввести пароль:</td>
+          <td><input type="password" name="password" /></td>
+        </tr>
+        <tr>
+          <td><input name="submit" type="submit" value="Зарегистрироваться" /></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+</div>
+
+
+<footer class="footerWelcome">
+  <div>ЧАСТНЫМ КЛИЕНТАМ</div>
+  <div>О КОМПАНИИ</div>
+  <div>СОТРУДНИЧЕСТВО</div>
+</footer>
+
+</body>
+
+</html>

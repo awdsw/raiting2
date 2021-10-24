@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактирование</title>
+  <style>
+    h2{
+      color: darkorange;
+    }
+    form{
+      display: flex;
+    }
+    button{
+      margin-left: 15px;
+    }
+  </style>
+</head>
+<body>
+<h3>Редактор пароля для пользователя</h3>
+<div th:each="user: ${userOptional}">
+  <h2 th:text="${user.userName}" style="width: 200px"/>
+</div>
+<div>
+  <form method="post">
+    <input type="password" name="password" placeholder="Ввести новый пароль">
+    <br>
+    <button type="submit">Обновить</button>
+  </form>
+</div>
+</body>
+</html>

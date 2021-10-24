@@ -1,0 +1,159 @@
+  <!DOCTYPE HTML>
+  <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>User Info</title>
+    <link rel ="stylesheet" th:href ="@{/css/home/welcome.css}">
+
+    <link rel ="stylesheet" th:href ="@{/css/user/user.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <style>
+      .star-rating{
+        font-size: 0;
+      }
+      .star-rating__wrap{
+        display: inline-block;
+        font-size: 1rem;
+      }
+      .star-rating__wrap:after{
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .star-rating__ico{
+        float: right;
+        padding-left: 2px;
+        cursor: pointer;
+        color: #FFB300;
+      }
+      .star-rating__ico:last-child{
+        padding-left: 0;
+      }
+      .star-rating__input{
+        display: none;
+      }
+      .star-rating__ico:hover:before,
+      .star-rating__ico:hover ~ .star-rating__ico:before,
+      .star-rating__input:checked ~ .star-rating__ico:before
+      {
+        content: "\f005";
+      }
+
+    </style>
+  </head>
+  <body>
+  <!-- Include _menu.html -->
+  <th:block th:include="/_menu"></th:block>
+
+
+  <main>
+    <div class="session">
+      <p style="color: #629fb1"><b>Страница пользователя</b></p>
+      <b>Это защищенная страница!</b>
+      <div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
+    </div>
+
+    <div class="welcomeUser">
+      <h3>Добро пожаловать : <span th:utext="${#request.userPrincipal.name}"></span></h3>
+    </div>
+  </main>
+
+  <!--Вывод всех вопросов пользователя-->
+<!--  <div th:each="questionEl:${questions}">-->
+<!--    <p th:text="${questionEl.getAppQuestion().question}">-->
+<!--  </div>-->
+
+  <!--Форма обращения, задает вопрос пользователь-->
+  <div class="quest">
+    <form action="/askQuestion" method="post">
+      <input type="text" name="question" value="Задан вопрос № ">
+      <input class="but-quest" type="submit" value="Задать вопрос">
+    </form>
+  </div>
+
+  <div class="yourQ">
+  <h3>Ваши вопросы:</h3>
+  <!--На странице пользователя вывод всех его вопросов-->
+
+  <!--Форма оценки вопросов-->
+
+        <th:block th:if="questions!=null">
+          <ol th:each="question:${questions}">
+            <li>
+                <b>Вопрос:</b> <span th:text="${question.getAppQuestion().question}"/>
+                <b>Ответил:</b> <span th:text="${question.getWorkerId().userName}"/>
+
+              <div th:if="${question.getMark() != null}">
+                <b>Оценка:</b> <span th:text="${question.getMark()}"/>
+              </div>
+
+              <form name="myForm" th:if="${question.getMark() == null}">
+
+                <div class="form-group">
+                  <label>Ваша оценка</label>
+                  <div class="star-rating">
+                    <div class="star-rating__wrap">
+                      <input class="star-rating__input" id="star-5" type="radio" name="rating" th:value="5">
+                      <label class="star-rating__ico fa fa-star-o fa-lg" for="star-5" title="Отлично"></label>
+                      <input class="star-rating__input" id="star-4" type="radio" name="rating" value="4">
+                      <label class="star-rating__ico fa fa-star-o fa-lg" for="star-4" title="Хорошо"></label>
+                      <input class="star-rating__input" id="star-3" type="radio" name="rating" value="3">
+                      <label class="star-rating__ico fa fa-star-o fa-lg" for="star-3" title="Удовлетворительно"></label>
+                      <input class="star-rating__input" id="star-2" type="radio" name="rating" value="2">
+                      <label class="star-rating__ico fa fa-star-o fa-lg" for="star-2" title="Плохо"></label>
+                      <input class="star-rating__input" id="star-1" type="radio" name="rating" value="1">
+                      <label class="star-rating__ico fa fa-star-o fa-lg" for="star-1" title="Ужасно"></label>
+                    </div>
+                  </div>
+                </div>
+                <input name="question" hidden th:value="${question.id}">
+                <input type="submit" name="click" value="Оценить" class="but-quest">
+
+              </form>
+            </li>
+
+          </ol>
+        </th:block>
+  </div>
+
+
+  <footer class="footerWelcome">
+    <div>ЧАСТНЫМ КЛИЕНТАМ</div>
+    <div>О КОМПАНИИ</div>
+    <div>СОТРУДНИЧЕСТВО</div>
+  </footer>
+
+  <script>
+    document.forms.myForm.addEventListener('submit', function (){
+      event.preventDefault();
+
+      // console.log(event.target.name);
+      // console.log(event.target.value);
+      // console.log(event.target.innerText);
+
+      console.log(event.target.rating.value);
+      console.log(event.target.question.value);
+      giveRating(event.target.question.value, event.target.rating.value);
+    });
+
+    //принимает id вопроса и оценку
+    function giveRating(questionId, mark) {
+      $.ajax({
+        url: "/saveMark",
+        method: "post",
+        cache: false,
+        dataType: "html",
+        data: {
+          questionId:questionId,
+          mark:mark
+        },
+        success: function (data) {
+          alert("Оценка выставлена")
+        }
+      });
+    }
+  </script>
+
+  </body>
+  </html>
